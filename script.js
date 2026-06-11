@@ -3,9 +3,9 @@
  */
 
 // WS SERVER
-const IP = "192.168.0.103";
-const WS_SERVER_URL = `ws://${IP}:3000`;
-const API_SERVER_URL = `http://${IP}:3000`;
+const IP = "https://songho-server.onrender.com";
+const WS_SERVER_URL = `ws://songho-server.onrender.com`;
+const API_SERVER_URL = `https://songho-server.onrender.com`;
 
 // ─── Navigation entre écrans ──────────────────────────────────────────────
 
