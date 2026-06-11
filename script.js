@@ -4,7 +4,7 @@
 
 // WS SERVER
 const IP = "https://songho-server.onrender.com";
-const WS_SERVER_URL = `ws://songho-server.onrender.com`;
+const WS_SERVER_URL = `wssg://songho-server.onrender.com`;
 const API_SERVER_URL = `https://songho-server.onrender.com`;
 
 // ─── Navigation entre écrans ──────────────────────────────────────────────
