@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Songho — Jeu Traditionnel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container" id="app">
+
+        <!-- ═══════════════════════════════════════════════
+             ÉCRAN D'ACCUEIL  (mode selector)
+        ════════════════════════════════════════════════ -->
+        <div id="screen-home" class="screen active">
+            <div class="home-card">
+                <div class="version-badge">ÉDITION 2.0</div>
+                <h1 class="game-title">SONGHO</h1>
+                <p class="game-subtitle">Jeu de stratégie traditionnel</p>
+
+                <div class="mode-buttons">
+                    <button class="mode-btn mode-local" onclick="selectMode('local')">
+                        <!-- <span class="mode-icon">👥</span> -->
+                        <span class="mode-label">EN LOCAL</span>
+                        <span class="mode-desc">2 joueurs · même écran</span>
+                    </button>
+                    <button class="mode-btn mode-online" onclick="selectMode('online')">
+                        <!-- <span class="mode-icon">🌐</span> -->
+                        <span class="mode-label">EN RESEAU</span>
+                        <span class="mode-desc">Rejoindre / créer une partie</span>
+                    </button>
+                </div>
+
+                <button class="btn btn-ghost" onclick="showRulesModal()">Règles du jeu</button>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════
+             ÉCRAN LOCAL — Saisie des noms
+        ════════════════════════════════════════════════ -->
+        <div id="screen-local-setup" class="screen">
+            <div class="setup-card">
+                <button class="back-btn" onclick="goHome()">← Retour</button>
+                <h2>Partie Locale</h2>
+                <div class="input-group">
+                    <label>Joueur Sud (commence)</label>
+                    <input type="text" id="localNameSud" placeholder="Nom du joueur Sud" maxlength="20" value="Joueur Sud">
+                </div>
+                <div class="input-group">
+                    <label>Joueur Nord</label>
+                    <input type="text" id="localNameNord" placeholder="Nom du joueur Nord" maxlength="20" value="Joueur Nord">
+                </div>
+                <button class="btn btn-primary" onclick="startLocalGame()">▶ Commencer</button>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════
+             ÉCRAN EN RESEAU — Lobby
+        ════════════════════════════════════════════════ -->
+        <div id="screen-lobby" class="screen">
+            <div class="lobby-card">
+                <button class="back-btn" onclick="goHome()">← Retour</button>
+                <h2>Parties en reseau</h2>
+
+                <div class="lobby-name-row">
+                    <input type="text" id="onlineName" placeholder="Votre pseudo" maxlength="20">
+                </div>
+
+                <div class="lobby-actions">
+                    <button class="btn btn-primary" onclick="showCreateRoom()">Créer une partie</button>
+                    <button class="btn btn-secondary" onclick="loadRooms()">Actualiser</button>
+                </div>
+
+                <div id="create-room-box" class="create-room-box" style="display:none;">
+                    <input type="text" id="roomNameInput" placeholder="Nom de la partie" maxlength="30">
+                    <button class="btn btn-primary" onclick="createRoom()">Créer</button>
+                    <button class="btn" onclick="hideCreateRoom()">Annuler</button>
+                </div>
+
+                <div id="rooms-list" class="rooms-list">
+                    <p class="rooms-empty">Chargement…</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════
+             ÉCRAN DE JEU (local + réseau partagent ce layout)
+        ════════════════════════════════════════════════ -->
+        <div id="screen-game" class="screen">
+            <header class="game-header">
+                <div class="header-left">
+                    <span id="gameModeLabel" class="version-badge">LOCAL</span>
+                    <span id="roomLabel" class="room-label"></span>
+                </div>
+                <h1 class="game-title-small">SONGHO</h1>
+                <div class="header-right">
+                    <div class="turn-box" id="turnBox">—</div>
+                    <button class="btn btn-sm" onclick="showRulesModal()">Règles</button>
+                    <!-- <button class="btn btn-sm" id="undoBtn" onclick="doUndo()" disabled>Annuler</button> -->
+                    <button class="btn btn-sm btn-danger" onclick="leaveGame()">Quitter</button>
+                </div>
+            </header>
+
+            <main class="game-main">
+                <aside class="side-panel" id="panelNord">
+                    <h2 id="nordName">Nord</h2>
+                    <div class="score-val" id="scoreNord">0</div>
+                    <p class="score-label">GRAINES CAPTURÉES</p>
+                    <div id="nordStatus" class="player-status"></div>
+                </aside>
+
+                <section class="board-section">
+                    <div class="status-bar" id="statusBar">Chargement…</div>
+                    <div class="board">
+                        <div class="row row-nord" id="row-nord"></div>
+                        <div class="row row-sud"  id="row-sud"></div>
+                    </div>
+                </section>
+
+                <aside class="side-panel" id="panelSud">
+                    <h2 id="sudName">Sud</h2>
+                    <div class="score-val" id="scoreSud">0</div>
+                    <p class="score-label">GRAINES CAPTURÉES</p>
+                    <div id="sudStatus" class="player-status"></div>
+                </aside>
+            </main>
+
+            <footer class="game-footer">
+                <div class="last-move-box">
+                    <h3>DERNIER COUP</h3>
+                    <p id="lastMoveText">—</p>
+                </div>
+                <div class="history-box">
+                    <h3>HISTORIQUE</h3>
+                    <ul id="historyList"></ul>
+                </div>
+                <div class="game-actions">
+                    <button class="btn btn-sm" id="rematchBtn" onclick="doRematch()" style="display:none;">Revanche</button>
+                </div>
+            </footer>
+        </div>
+
+    </div><!-- /app -->
+
+    <!-- ── Modal Règles ─────────────────────────────── -->
+    <div id="modal-rules" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-btn" onclick="hideRulesModal()">✕</span>
+            <h2>Règles du Songho</h2>
+            <ol>
+                <li>Le plateau comporte <strong>2 rangées de 7 cases</strong>. Chaque case contient <strong>5 graines</strong> au départ.</li>
+                <li>Le joueur <strong>Sud</strong> commence. Chaque joueur joue uniquement dans sa rangée.</li>
+                <li>On choisit une case non vide et on distribue les graines <strong>une par une</strong> vers la droite, en continuant sur la rangée adverse si nécessaire.</li>
+                <li><strong>Capture :</strong> si la dernière graine posée atterrit chez l'adversaire et que la case contient exactement <strong>2 ou 3</strong> graines, elles sont capturées.</li>
+                <li><strong>Capture en chaîne :</strong> on continue vers la gauche tant que les cases précédentes de l'adversaire contiennent 2 ou 3 graines.</li>
+                <li>La partie s'arrête quand un joueur ne peut plus jouer. Les graines restantes vont au dernier joueur actif. Le joueur avec le plus de graines capturées gagne.</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- ── Modal Connexion perdue ────────────────────── -->
+    <div id="modal-disconnected" class="modal" style="display:none;">
+        <div class="modal-content" style="text-align:center;">
+            <h2>Connexion perdue</h2>
+            <p id="disconnectMsg">Votre adversaire a quitté la partie.</p>
+            <button class="btn btn-primary" style="margin-top:20px;" onclick="goHome()">Retour à l'accueil</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
